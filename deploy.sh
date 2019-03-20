@@ -5,8 +5,8 @@ ssh-add -k ~/.ssh/id_rsa &&
 cd /home/ubuntu/Rest-API-Portofolio &&
 git pull
 
-sudo source ~/.profile
-sudo echo "$DOCKERHUB_PASS" | docker login --username $DOCKERHUB_USER --password-stdin
+source ~/.profile
+echo "$DOCKERHUB_PASS" | docker login --username $DOCKERHUB_USER --password-stdin
 sudo docker stop ecommerce_container1007
 sudo docker rm ecommerce_container1007
 sudo docker rmi fatjan/ecommerce
