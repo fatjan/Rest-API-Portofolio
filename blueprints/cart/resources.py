@@ -165,7 +165,7 @@ class CartResource(Resource):
         elif get_jwt_claims()['name'] != pembeli:
             return 'Anuthorized. Cannot edit this cart.', 404, {'Content-Type': 'application/json'}
         elif status_before_edit == "paid": 
-            return 'Cart with id number = %d is already paid and cannot be edited' % id, 404, {'Content-Type': 'application/json'}
+            return {"code": "404", "status": "bad request", "message":'Cart with id number = %d is already paid and cannot be edited' % id}, 404, {'Content-Type': 'application/json'}
         return 'Cart with that id number is not found', 404, {'Content-Type': 'application/json'}
 
         
