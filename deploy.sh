@@ -3,7 +3,7 @@
 eval "$(ssh-agent -s)" &&
 ssh-add -k ~/.ssh/id_rsa &&
 cd /home/ubuntu/Rest-API-Portofolio &&
-sudo git pull
+git pull
 
 sudo source ~/.profile
 sudo echo "$DOCKERHUB_PASS" | docker login --username $DOCKERHUB_USER --password-stdin
