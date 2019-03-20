@@ -5,7 +5,7 @@ os:
 - linux
 env:
   global:
-  - DOCKER_IMAGE_NAME="fatjan/ecommerce"
+  - DOCKER_IMAGE_NAME="ecommerce"
   - DOCKER_HUB_ORG="fatjan"
 
 before_script:
