@@ -61,7 +61,7 @@ class UserResource(Resource):
         user_new = Users(None, args['user_type'], args['username'], args['name'] , args['password'], args['address'], args['kota'])
         db.session.add(user_new) #insert the input data into the database
         db.session.commit() 
-        return marshal(user_new, Users.response_field), 200, {'Content-Type': 'application/json'}   
+        return {"code": 200, "message": "OK, your user profile has been created", "data":marshal(user_new, Users.response_field)}, 200, {'Content-Type': 'application/json'}   
     
     @jwt_required #if user wants to change their profile details
     #user can only change their own profile. not someone else's

@@ -52,8 +52,8 @@ class PopProductResource(Resource):
             if row.terjual >= 10:
                 rows.append(marshal(row, PopProducts.response_field))
         if rows is not []:
-            return rows, 200, {'Content-Type': 'application/json'}
-        return {'message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
+            return {"code": "200", "status": "OK", "message":"popular products are on display", "pop_products": rows}, 200, {'Content-Type': 'application/json'}
+        return {"code": "404", "status": "bad request", "message": 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
         # else:
         #     qry = Products.query.get(id) #select * from where id = id
         #     if qry != None:
@@ -110,11 +110,12 @@ class PopProductAdminResource(Resource):
     @jwt_required #admin can delete popular products if required.  
     def delete(self, id):
         qry_del = PopProducts.query.get(id)
+        del_pop_product = marshal(qry_del, PopProducts.response_field)
         if qry_del is not None and get_jwt_claims()['user_type'] == 'admin':
             db.session.delete(qry_del)
             db.session.commit()
-            return 'Popular product with id = %d has been deleted' % id, 200, {'Content-Type': 'application/json'}
-        return {'status': 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
+            return {"code": "200", "status": "OK", "message":'Popular product with id = %d has been deleted' % id, "deleted popular product": del_pop_product}, 200, {'Content-Type': 'application/json'}
+        return {"code": "404", "status": "bad request", "message": 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(PopProductAdminResource, '/admin', '/admin/<int:id>')
         

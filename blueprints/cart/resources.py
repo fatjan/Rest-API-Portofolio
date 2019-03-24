@@ -55,18 +55,18 @@ class CartResource(Resource):
                     qry_product = Products.query.get(product_id)
                     if qry_product.penjual == penjual and i.status=='paid':
                         baris.append(marshal(i, Carts.response_field))    
-                return baris, 200, {'Content-Type': 'application/json'}
+                return {"code": "200", "status": "OK", "message":"cart is on display", "data": baris}, 200, {'Content-Type': 'application/json'}
 
             rows = []
             for row in qry.limit(args['rp']).offset(rumus_offset).all():        
                 rows.append(marshal(row, Carts.response_field))
             # if get_jwt_claims()['id'] == 'user_id':
-            return rows, 200, {'Content-Type': 'application/json'}
+            return {"code": 200, "message": "OK", "data":rows}, 200, {'Content-Type': 'application/json'}
             # return {'message': 'Sorry, this page is not accessible'}, 404, {'Content-Type': 'application/json'}
         else:
             qry = Carts.query.get(id) #select * from where id = id
             if qry != None and id == get_jwt_claims()['id']:
-                return marshal(qry, Carts.response_field), 200, {'Content-Type': 'application/json'}   
+                return {"code": 200, "message": "OK", "data":marshal(qry, Carts.response_field)}, 200, {'Content-Type': 'application/json'}   
             return {'status': 'not found', 'message': 'you can only see your profile details'}, 404, {'Content-Type': 'application/json'}
             #publik (pembeli) can only see their own cart
 
@@ -161,12 +161,12 @@ class CartResource(Resource):
                 qry_product.tersedia -= qry_cart.jumlah
                 db.session.commit()
 
-            return marshal(qry_cart, Carts.response_field), 200, {'Content-Type': 'application/json'}
+            return {"code": "200", "status": "OK", "message":"your cart has been edited", "cart": marshal(qry_cart, Carts.response_field)}, 200, {'Content-Type': 'application/json'}
         elif get_jwt_claims()['name'] != pembeli:
-            return 'Anuthorized. Cannot edit this cart.', 404, {'Content-Type': 'application/json'}
+            return {"code": "404", "status": "bad request", "message":'Anuthorized. Cannot edit this cart.'}, 404, {'Content-Type': 'application/json'}
         elif status_before_edit == "paid": 
             return {"code": "404", "status": "bad request", "message":'Cart with id number = %d is already paid and cannot be edited' % id}, 404, {'Content-Type': 'application/json'}
-        return 'Cart with that id number is not found', 404, {'Content-Type': 'application/json'}
+        return {"code": "404", "status": "bad request", "message":'Cart with that id number is not found'}, 404, {'Content-Type': 'application/json'}
 
         
 
@@ -181,8 +181,8 @@ class CartResource(Resource):
             if get_jwt_claims()['name'] == pembeli:
                 db.session.delete(qry_del)
                 db.session.commit()
-                return 'Cart with id = %d has been deleted' % id, 200, {'Content-Type': 'application/json'}
-        return {'status': 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
+                return {"code": "200", "status": "OK", "message":'Cart with id = %d has been deleted' % id}, 200, {'Content-Type': 'application/json'}
+        return {"code": "404", "status": "bad request", "message": 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
         
     def patch(self):
         return 'Not yet implemented', 501

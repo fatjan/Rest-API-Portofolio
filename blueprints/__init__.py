@@ -16,7 +16,10 @@ api = Api(app, catch_all_404s=True)
 
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fatmajan:password@172.31.39.5:3306/olshop'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fatmajan:password@172.31.39.5:3306/olshop'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fatimahfashion:password@fatimahfashion.cr3knnpxz7n1.ap-southeast-2.rds.amazonaws.com:3306/fatimahfashion'
+
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
