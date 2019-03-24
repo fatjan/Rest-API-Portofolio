@@ -18,7 +18,8 @@ class Products(db.Model):
     tersedia = db.Column(db.Integer, nullable=False) #supaya pembeli tahu ada berapa banyak item yang tersedia dan juga
     #jumlah nya akan terkurangi ketika ada user_type = pembeli yang membeli product ini.
     kota = db.Column(db.String(255), nullable=False) #untuk pembeli memperkirakan ongkir. supaya tahu barang dikirim dari mana.
-    
+    urlimage = db.Column(db.String(255), nullable=False) #foto barang
+
     response_field = {
         'id' : fields.Integer,
         'kategori' : fields.String,
@@ -31,9 +32,10 @@ class Products(db.Model):
         'penjual' : fields.String,
         'tersedia' : fields.Integer,
         'kota' : fields.String,
+        'urlimage' : fields.String
     }
 
-    def __init__(self, id, kategori, type, name, harga, no_seri, brand, detail, penjual, tersedia, kota):
+    def __init__(self, id, kategori, type, name, harga, no_seri, brand, detail, penjual, tersedia, kota, url_img):
         self.id = id
         self.kategori = kategori
         self.type = type
@@ -45,6 +47,7 @@ class Products(db.Model):
         self.penjual = penjual
         self.tersedia = tersedia
         self.kota = kota
+        self.urlimage = urlimage
        
     def __repr__(self): #initiate table model
         return '<Product %r>' % self.id #the __repr__ must have a string type as return

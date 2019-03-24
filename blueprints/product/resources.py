@@ -59,7 +59,7 @@ class ProductResource(Resource):
                             if qry.first() is None:
                                 qry = Products.query.filter(Products.kota.like("%"+args['search']+"%"))
                                 if qry.first() is None:
-                                    return {'message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
+                                    return {'code': '404', 'status':'not found', 'message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
 
             rows = []
             for row in qry.limit(args['rp']).offset(rumus_offset).all():
@@ -68,13 +68,13 @@ class ProductResource(Resource):
                 elif args['max_harga'] is None:
                     rows.append(marshal(row, Products.response_field))
             if rows is not []:
-                return rows, 200, {'Content-Type': 'application/json'}
-            return {'message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
+                return {'code': '200', 'status':'OK', 'message':'produts are on display','products':rows}, 200, {'Content-Type': 'application/json'}
+            return {'code': '404', 'status':'not found', 'message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
         else:
             qry = Products.query.get(id) #select * from where id = id
             if qry != None:
-                return marshal(qry, Products.response_field), 200, {'Content-Type': 'application/json'}   
-            return {'status': 'not found', 'message': f'Product dengan id: {id} tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
+                return {'code': '200', 'status':'OK', 'message':'product is on display', 'product': marshal(qry, Products.response_field)}, 200, {'Content-Type': 'application/json'}   
+            return {'code': '404', 'status':'bad request', 'message': f'Product dengan id: {id} tidak ditemukan'}, 404, {'Content-Type': 'application/json'}
     
     @jwt_required #only admin and seller who can post a product.
     def post(self): #for the seller to post their products 
@@ -89,13 +89,15 @@ class ProductResource(Resource):
         penjual = get_jwt_claims()['name']
         parser.add_argument('tersedia', location='json')
         kota = get_jwt_claims()['kota']
+        parser.add_argument('urlimage', location='json')
+        
         args = parser.parse_args() #this becomes str_serialized
         if get_jwt_claims()['user_type'] == 'admin' or get_jwt_claims()['user_type'] == 'penjual':
-            product_new = Products(None, args['kategori'], args['type'], args['name'], args['harga'], no_seri, args['brand'], args['detail'], penjual, args['tersedia'], kota)
+            product_new = Products(None, args['kategori'], args['type'], args['name'], args['harga'], no_seri, args['brand'], args['detail'], penjual, args['tersedia'], kota, args['urlimage'])
             db.session.add(product_new) #insert the input data into the database
             db.session.commit() 
-            return marshal(product_new, Products.response_field), 200, {'Content-Type': 'application/json'}
-        return 'Failed to post a product, this page is not accessible.', 404, {'Content-Type': 'application/json'}
+            return {'code': '200', 'status':'OK', 'message':'product has been posted', 'product': marshal(product_new, Products.response_field)}, 200, {'Content-Type': 'application/json'}
+        return {'code': '404', 'status':'bad request', 'message':'Failed to post a product, this page is not accessible.'}, 404, {'Content-Type': 'application/json'}
 
     # if admin wants to edit product whenever required.
     @jwt_required 
@@ -108,6 +110,8 @@ class ProductResource(Resource):
         parser.add_argument('brand', location='json')
         parser.add_argument('detail', location='json')
         parser.add_argument('tersedia', location='json')
+        parser.add_argument('urlimage', location='json')
+
         args = parser.parse_args()
         qry_product = Products.query.get(id)
         #id is found and the user type is penjual or admin, put can be used. publik cannot edit product data.
@@ -128,20 +132,23 @@ class ProductResource(Resource):
                 qry_product.detail = args['detail']
             if args['tersedia'] is not None:
                 qry_product.tersedia = args['tersedia']
+            if args['urlimage'] is not None:
+                qry_product.urlimage = args['urlimage']
             db.session.commit()
-            return marshal(qry_product, Products.response_field), 200, {'Content-Type': 'application/json'}
+            return {'code': '200', 'status':'OK', 'message':'product has been successfully updated', 'product': marshal(qry_product, Products.response_field)}, 200, {'Content-Type': 'application/json'}
         elif get_jwt_claims()['user_type'] == 'publik':
-            return 'Failed to edit product, this page is not accessible.', 404, {'Content-Type': 'application/json'}    
-        return 'Product with that id number is not found', 404, {'Content-Type': 'application/json'}
+            return {'code': '404', 'status':'bad request', 'message':'Failed to edit product, this page is not accessible.'}, 404, {'Content-Type': 'application/json'}    
+        return {'code': '404', 'status':'bad request', 'message':'Product with that id number is not found'}, 404, {'Content-Type': 'application/json'}
 
     @jwt_required #admin or penjual can delete products if required.  
     def delete(self, id):
         qry_del = Products.query.get(id)
-        if qry_del is not None and get_jwt_claims()['user_type'] == 'penjual' or get_jwt_claims()['user_type'] == 'admin':
+        del_product = marshal(qry_del, Products.response_field)
+        if qry_del is not None and (get_jwt_claims()['user_type'] == 'penjual' and get_jwt_claims()['name'] == qry_del.penjual) or get_jwt_claims()['user_type'] == 'admin':
             db.session.delete(qry_del)
             db.session.commit()
-            return 'product with id = %d has been deleted' % id, 200, {'Content-Type': 'application/json'}
-        return {'status': 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
+            return {'code': '200', 'status':'OK', 'message':'product with id = %d has been deleted' % id, "deleted product": del_product}, 200, {'Content-Type': 'application/json'}
+        return {'code': '404', 'status':'bad request', 'message': 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
         
     def patch(self):
         return 'Not yet implemented', 501
@@ -170,13 +177,13 @@ class ProductPenjualResource(Resource):
                 for row in qry.limit(args['rp']).offset(rumus_offset).all():
                     rows.append(marshal(row, Products.response_field))
                 if rows is not []:
-                    return rows, 200, {'Content-Type': 'application/json'}
-                return {'message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
+                    return {'code': '200', 'status':'OK', 'message':'your products are on display', 'products': rows}, 200, {'Content-Type': 'application/json'}
+                return {'code': '404', 'status':'bad request','message': 'Barang yang anda cari tidak dapat ditemukan'}, 404, {'Content-Type': 'application/json'}
         else:
             qry = Products.query.get(id) #select * from where id = id
-            if qry != None:
-                return marshal(qry, Products.response_field), 200, {'Content-Type': 'application/json'}   
-            return {'status': 'not found', 'message': f'Product dengan id: {id} tidak ditemukan'}, 404, {'Content-Type': 'application/json'}        
+            if qry != None and qry.penjual == get_jwt_claims()['name']:
+                return {'code': '200', 'status':'OK', 'message':'your product is on display', 'product':marshal(qry, Products.response_field)}, 200, {'Content-Type': 'application/json'}   
+            return {'code': '404', 'status': 'bad request', 'message': f'Product dengan id: {id} tidak ditemukan'}, 404, {'Content-Type': 'application/json'}        
 
     @jwt_required 
     def put(self, id):
@@ -188,6 +195,8 @@ class ProductPenjualResource(Resource):
         parser.add_argument('brand', location='json')
         parser.add_argument('detail', location='json')
         parser.add_argument('tersedia', location='json')
+        parser.add_argument('urlimage', location='json')
+
         args = parser.parse_args()
         qry_product = Products.query.get(id)
         #id is found and the user type is penjual or admin, put can be used. publik cannot edit product data.
@@ -208,10 +217,12 @@ class ProductPenjualResource(Resource):
                 qry_product.detail = args['detail']
             if args['tersedia'] is not None:
                 qry_product.tersedia = args['tersedia']
+            if args['urlimage'] is not None:
+                qry_product.urlimage = args['urlimage']
             db.session.commit()
-            return marshal(qry_product, Products.response_field), 200, {'Content-Type': 'application/json'}
+            return {"code": "200", "status": "OK", "message":"your product has been updated.", "product": marshal(qry_product, Products.response_field)}, 200, {'Content-Type': 'application/json'}
         elif get_jwt_claims()['user_type'] == 'publik':
-            return 'Failed to edit product, this page is not accessible.', 404, {'Content-Type': 'application/json'}    
-        return 'Product with that id number is not found', 404, {'Content-Type': 'application/json'}
+            return {"code": "404", "status": "bad request", "message":'Failed to edit product, this page is not accessible.'}, 404, {'Content-Type': 'application/json'}    
+        return {"code": "404", "status": "bad request", "message":'Product with that id number is not found'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(ProductPenjualResource, '/penjual', '/penjual/<int:id>')
