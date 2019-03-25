@@ -105,7 +105,7 @@ class CartResource(Resource):
             qry_pop_product = PopProducts.query.get(qry_product.id)
             if qry_pop_product is None: 
                 terjual = int(args['jumlah'])
-                pop_product_new = PopProducts(qry_product.id, qry_product.name, qry_product.penjual, terjual)
+                pop_product_new = PopProducts(qry_product.id, qry_product.name, qry_product.penjual, terjual, qry_product.urlimage)
                 db.session.add (pop_product_new)
                 db.session.commit()
             else: 
@@ -152,7 +152,7 @@ class CartResource(Resource):
                 qry_product = Products.query.get(qry_cart.product_id)
                 if qry_pop_product is None: 
                     terjual = qry_cart.jumlah
-                    pop_product_new = PopProducts(qry_product.id, qry_product.name, qry_product.penjual, terjual)
+                    pop_product_new = PopProducts(qry_product.id, qry_product.name, qry_product.penjual, terjual, qry_product.urlimage)
                     db.session.add (pop_product_new)
                     db.session.commit()
                 else: 

@@ -9,19 +9,22 @@ class PopProducts(db.Model):
     name = db.Column(db.String(255), nullable=False) #nama product diambil dari table product melalui product_id
     penjual = db.Column(db.String(255), nullable=False) #nama penjual diambil dari table product melalui product_id
     terjual = db.Column(db.Integer, nullable=False) #minimum untuk jadi popular product adalah ketika terbeli sudah mencapai 25
+    urlimage = db.Column(db.String(255), nullable=False)
     
     response_field = {
         'id' : fields.Integer,
         'name' : fields.String,
         'penjual' : fields.String,
         'terjual' : fields.String,
+        'urlimage' : fields.String
     }
 
-    def __init__(self, id, name, penjual, terjual):
+    def __init__(self, id, name, penjual, terjual, urlimage):
         self.id = id
         self.name = name
         self.penjual = penjual
         self.terjual = terjual
+        self.urlimage = urlimage
         
     def __repr__(self): #initiate table model
         return '<Pop_Product %r>' % self.id #the __repr__ must have a string type as return

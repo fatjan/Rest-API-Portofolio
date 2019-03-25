@@ -35,7 +35,7 @@ class Products(db.Model):
         'urlimage' : fields.String
     }
 
-    def __init__(self, id, kategori, type, name, harga, no_seri, brand, detail, penjual, tersedia, kota, url_img):
+    def __init__(self, id, kategori, type, name, harga, no_seri, brand, detail, penjual, tersedia, kota, urlimage):
         self.id = id
         self.kategori = kategori
         self.type = type
