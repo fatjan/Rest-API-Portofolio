@@ -18,7 +18,7 @@ class PopProducts(db.Model):
         'terjual' : fields.String,
         'urlimage' : fields.String
     }
-
+   
     def __init__(self, id, name, penjual, terjual, urlimage):
         self.id = id
         self.name = name
@@ -28,4 +28,4 @@ class PopProducts(db.Model):
         
     def __repr__(self): #initiate table model
         return '<Pop_Product %r>' % self.id #the __repr__ must have a string type as return
-  
+     

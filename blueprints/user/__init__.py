@@ -23,7 +23,7 @@ class Users(db.Model):
         'address' : fields.String,
         'kota' : fields.String,
     }
-
+  
     def __init__(self, id, user_type, username, name, password, address, kota):
         self.id = id
         self.user_type = user_type

@@ -118,4 +118,4 @@ class PopProductAdminResource(Resource):
         return {"code": "404", "status": "bad request", "message": 'ID_IS_NOT_FOUND'}, 404, {'Content-Type': 'application/json'}
 
 api.add_resource(PopProductAdminResource, '/admin', '/admin/<int:id>')
-        
+               

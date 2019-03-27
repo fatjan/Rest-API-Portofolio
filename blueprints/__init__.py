@@ -14,7 +14,7 @@ app = Flask(__name__)
 ## initiate flask-restful instance
 api = Api(app, catch_all_404s=True)
 
-
+   
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://fatmajan:password@172.31.39.5:3306/olshop'
 

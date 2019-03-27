@@ -154,7 +154,7 @@ class ProductResource(Resource):
         return 'Not yet implemented', 501
 
 api.add_resource(ProductResource, '', '/<int:id>')
-
+   
 
 class ProductPenjualResource(Resource): 
 

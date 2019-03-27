@@ -54,4 +54,4 @@ class Carts(db.Model):
        
     def __repr__(self): #initiate table model
         return '<Cart %r>' % self.id #the __repr__ must have a string type as return
-     
+        

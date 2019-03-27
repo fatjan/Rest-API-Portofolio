@@ -22,4 +22,4 @@ class CreateTokenResources(Resource):
         else:
             return {'status': 'UNAUTHORIZED', 'message': 'invalid name or password'}, 401
 
-api.add_resource(CreateTokenResources, '')
+api.add_resource(CreateTokenResources, '')  

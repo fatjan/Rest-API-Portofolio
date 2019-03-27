@@ -2,7 +2,7 @@ import random, logging
 from blueprints import db
 from flask_restful import fields
 
-
+   
 class Products(db.Model):
     __tablename__ = "product"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
