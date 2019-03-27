@@ -47,15 +47,15 @@ class CartResource(Resource):
             
 
             #if token belongs to penjual
-            if get_jwt_claims()['user_type'] == 'penjual':
-                baris = []
-                for i in qry.all():
-                    penjual = get_jwt_claims()['name']
-                    product_id = i.product_id
-                    qry_product = Products.query.get(product_id)
-                    if qry_product.penjual == penjual and i.status=='paid':
-                        baris.append(marshal(i, Carts.response_field))    
-                return {"code": "200", "status": "OK", "message":"cart is on display", "data": baris}, 200, {'Content-Type': 'application/json'}
+            # if get_jwt_claims()['user_type'] == 'penjual':
+            #     baris = []
+            #     for i in qry.all():
+            #         penjual = get_jwt_claims()['name']
+            #         product_id = i.product_id
+            #         qry_product = Products.query.get(product_id)
+            #         if qry_product.penjual == penjual and i.status=='paid':
+            #             baris.append(marshal(i, Carts.response_field))    
+            #     return {"code": "200", "status": "OK", "message":"cart is on display", "data": baris}, 200, {'Content-Type': 'application/json'}
 
             rows = []
             for row in qry.limit(args['rp']).offset(rumus_offset).all():        
