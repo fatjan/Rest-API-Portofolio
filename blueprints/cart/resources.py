@@ -69,7 +69,7 @@ class CartResource(Resource):
                 return {"code": 200, "message": "OK", "data":marshal(qry, Carts.response_field)}, 200, {'Content-Type': 'application/json'}   
             return {'status': 'not found', 'message': 'you can only see your profile details'}, 404, {'Content-Type': 'application/json'}
             #publik (pembeli) can only see their own cart
-
+    
     @jwt_required
     def post(self): #for everyone to register and login        
         parser = reqparse.RequestParser()

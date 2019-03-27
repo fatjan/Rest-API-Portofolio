@@ -13,7 +13,7 @@ class Users(db.Model):
     password = db.Column(db.String(255), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     kota = db.Column(db.String(255), nullable=False) #untuk keperluan estimasi biaya pengiriman barang.
-    
+       
     response_field = {
         'id' : fields.Integer,
         'user_type' : fields.String,

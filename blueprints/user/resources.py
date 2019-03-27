@@ -12,7 +12,7 @@ class UserResource(Resource):
 
     def __init__(self):
         pass
-    
+       
     @jwt_required  #for admin to see all users 
     def get(self):
         if get_jwt_claims()['user_type'] == 'admin':
